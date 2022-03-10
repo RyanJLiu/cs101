@@ -32,8 +32,11 @@ int main()
 	scanf("%d",&id);
 	printf("%s","請問您要買幾組樂透彩: ");
 	scanf("%d",&n);
-	idf=fopen("operator_id.bin", "rw+");
+	idf=fopen("operator_id.bin", "wb+");
 	fprintf(idf, "%d", id);
+	fclose(idf);
+	idf=fopen("count.bin", "wb+");
+	fprintf(idf, "%d", num);
 	fclose(idf);
 	int r[5][7]={0};
 	for(i=0;i<5;i++)
