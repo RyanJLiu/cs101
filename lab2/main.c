@@ -41,13 +41,9 @@ int main()
 	scanf("%d",&rec.emp_id);
 	printf("%s","請問您要買幾組樂透彩: ");
 	scanf("%d",&n);
-	idf=fopen("num.bin", "wb+");
-	fprintf(idf, "%d", rec.emp_id); 
-	fprintf(idf, "%d", num);
-	fclose(idf);
 	strftime(rec.lotto_date,100,"%Y%m%d", localtime(&curtime));
 	strftime(rec.lotto_time,100,"%H:%M:%S", localtime(&curtime));
-	rec.lotto_reciept=num*50*1.1;
+	rec.lotto_reciept=n*50*1.1;
 	int r[5][7]={0};
 	for(i=0;i<5;i++)
 	{
@@ -103,7 +99,7 @@ int main()
 	fclose(fp);
 	printf("%s%d%s%s","已為您購買的",n,"組樂透彩組合輸出至 ",name);
 	idf=fopen("record.bin", "ab+");
-	fprintf(idf, "%d %f %d %c %c\n", rec.lotto_no, rec.lotto_reciept, rec.emp_id, rec.lotto_date, rec.lotto_time);
+	fprintf(idf, "%d %f %d %s %s\n", rec.lotto_no, rec.lotto_reciept, rec.emp_id, rec.lotto_date, rec.lotto_time);
 	fclose(idf);
 	return 0;
 }
