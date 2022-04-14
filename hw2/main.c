@@ -11,7 +11,7 @@ int cmp(const void *a, const void *b)
 typedef struct lotto_record_t
 {
 	int lotto_no;
-	float lotto_reciept;
+	float lotto_receipt;
 	int emp_id;
 	char lotto_date[100];
 	char lotto_time[100];
@@ -29,7 +29,7 @@ int main()
 	int i, j, k, n;
 	int num=1;
 	char name[17]="lotto[00001].txt";
-	record rec;
+	record rec[1];
 	time_t curtime;
 	time(&curtime);
 	printf("%s",ctime(&curtime));
@@ -42,21 +42,21 @@ int main()
 		fclose(fp);
 	}
 	fclose(fp);
-	rec.lotto_no=num;
+	rec[0].lotto_no=num;
 	srand((unsigned) time(NULL));
 	printf("%s","歡迎光臨長庚樂透彩購買機台\n請輸入操作人員ID:(0~5):");
-	scanf("%d",&rec.emp_id);
-	if(rec.emp_id==0)
+	scanf("%d",&rec[0].emp_id);
+	if(rec[0].emp_id==0)
 	{
-		emp_r emp;
+		emp_r emp[1];
 		printf("%s","請輸入要新增操作人員 ID:(1~99):");
-		scanf("%d",&emp.emp_id);
+		scanf("%d",&emp[0].emp_id);
 		printf("%s","請輸入要新增操作人員 Name:");
-		scanf("%s",&emp.emp_name);
+		scanf("%s",&emp[0].emp_name);
 		printf("%s","請輸入要新增操作人員 Salary:");
-		scanf("%d",&emp.emp_salary);
+		scanf("%d",&emp[0].emp_salary);
 		idf=fopen("operator_id.bin", "ab+");
-		fprintf(idf, "%d %s %d\n", emp.emp_id, emp.emp_name, emp.emp_salary);
+		fwrite(emp, sizeof(emp_r), 1, idf);
 		fclose(idf);
 		printf("輸入完成");
 	}
@@ -64,9 +64,9 @@ int main()
 	{
 		printf("%s","請問您要買幾組樂透彩: ");
 		scanf("%d",&n);
-		strftime(rec.lotto_date,100,"%Y%m%d", localtime(&curtime));
-		strftime(rec.lotto_time,100,"%H:%M:%S", localtime(&curtime));
-		rec.lotto_reciept=n*50*1.1;
+		strftime(rec[0].lotto_date,100,"%Y%m%d", localtime(&curtime));
+		strftime(rec[0].lotto_time,100,"%H:%M:%S", localtime(&curtime));
+		rec[0].lotto_receipt=n*50*1.1;
 		int r[5][7]={0};
 		for(i=0;i<5;i++)
 		{
@@ -117,12 +117,12 @@ int main()
 			}
 			fprintf(fp,"\n");
 		}
-		fprintf(fp,"%s%d%s","========* Op.0000",rec.emp_id," *========\n");
+		fprintf(fp,"%s%d%s","========* Op.0000",rec[0].emp_id," *========\n");
 		fprintf(fp,"========= csie@CGU =========\n");
 		fclose(fp);
 		printf("%s%d%s%s","已為您購買的",n,"組樂透彩組合輸出至 ",name);
 		idf=fopen("record.bin", "ab+");
-		fprintf(idf, "%d %f %d %s %s\n", rec.lotto_no, rec.lotto_reciept, rec.emp_id, rec.lotto_date, rec.lotto_time);
+		fwrite(rec, sizeof(record), 1, idf);
 		fclose(idf);
 	}
 	return 0;
