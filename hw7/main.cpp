@@ -1,4 +1,5 @@
 #include<iostream>
+#include<stdlib.h>
 
 using namespace std;
 
@@ -10,16 +11,16 @@ class MMmanger
 		int get_MMCapacity();
 		void print_calloc_array(int flag, int size);
 		MMmanger(int size);
+		~MMmanger(); 
 	private:
-		int f;
 		int s;
-		int mem[];
-		int memv[];
+		int **mem;
+		int *memv;
 };
 
 int main()
 {
-	MMmanger mmer(10); 
+	MMmanger mmer(10);
 	int* p1 = mmer.callocMM(1);
 	int* p2 = mmer.callocMM(2);
 	int* p3 = mmer.callocMM(3);
@@ -32,15 +33,18 @@ int main()
 
 MMmanger::MMmanger(int size):s(size)
 {
-	int i;
-	f=0;
-	for(i=0;i<s;i++)
-	{
-		mem[i]=0;
-		memv[i]=0;
-	}
+	mem=(int**)calloc(s,sizeof(int));
+	memv=(int*)calloc(s,sizeof(int));
+	for(int i=0;i<s;i++)
+		mem[i]=NULL;
 }
 
+MMmanger::~MMmanger()
+{
+	int i;
+	free(memv);
+	free(mem);
+}
 
 int* MMmanger::callocMM(int size)
 {
@@ -48,10 +52,9 @@ int* MMmanger::callocMM(int size)
 	e=0;
 	c=0;
 	flag=0;
-	f=f+1;
 	for(i=0;i<s;i++)
 	{
-		if(memv[i]==0)
+		if(!mem[i])
 			c=c+1;
 		else
 			c=0;
@@ -62,17 +65,15 @@ int* MMmanger::callocMM(int size)
 			flag=1;
 		}	
 	}
-	cout<<c<<"  "<<e<<"  "<<f<<"  ";
 	if(flag==1)
 	{
 		for(i=e;i>e-size;i--)
 		{
-			mem[i]=f;
-			memv[i]=1;
+			mem[i]=&memv[e];
 		}
 	}
 	print_calloc_array(flag, size);
-	return &f;
+	return &memv[e];
 }
 
 void MMmanger::free_MM(int* p)
@@ -80,11 +81,8 @@ void MMmanger::free_MM(int* p)
 	int i, t;
 	for(i=0;i<10;i++)
 	{
-		if(mem[i]==*p)
-		{
-			memv[i]=0;
-			mem[i]=0;
-		}
+		if(mem[i]==p)
+			mem[i]=NULL;
 	}
 	print_calloc_array(1, s);
 }
@@ -95,7 +93,7 @@ int MMmanger::get_MMCapacity()
 	c=0;
 	for(i=0;i<s;i++)
 	{
-		if(memv[i]==0)
+		if(!mem[i])
 			c=c+1;
 	}
 	return c;
@@ -107,7 +105,10 @@ void MMmanger::print_calloc_array(int flag, int size)
 	c=get_MMCapacity();
 	cout<<"Capacity:"<<c<<" - ";
 	for(i=0;i<s;i++)
-		cout<<memv[i];
+		if(mem[i])
+			cout<<1;
+		else
+			cout<<0;
 	if(flag==0)
 		cout<<" <- Out of space: demand "<<size;
 	cout<<"\n";
